@@ -1,0 +1,29 @@
+{
+  "name": "@hexlet/code",
+  "version": "0.1.0",
+  "proxy": "http://localhost:5001",
+  "description": "Frontend with React, final Hexlet project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivan-fedoroff/frontend-project-lvl4.git"
+  },
+  "keywords": [
+    "Chat",
+    "React",
+    "Redux",
+    "Hexlet"
+  ],
+  "author": "Ivan Fedorov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivan-fedoroff/frontend-project-lvl4/issues"
+  },
+  "homepage": "https://github.com/ivan-fedoroff/frontend-project-lvl4#readme",
+  "dependencies": {
+    "@hexlet/chat-server": "^1.1.3"
+  }
+}
