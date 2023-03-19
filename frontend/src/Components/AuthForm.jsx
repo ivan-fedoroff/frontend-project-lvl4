@@ -33,7 +33,6 @@ const AuthForm = () => {
       <h1 className="text-center mb-4">Войти</h1>
 
       <div className="form-floating mb-3">
-        <label htmlFor="nickname">Ваш Ник</label>
         <input
           id="nickname"
           className="form-control"
@@ -43,10 +42,10 @@ const AuthForm = () => {
           onChange={formik.handleChange}
           value={formik.values.nickname}
         />
+        <label htmlFor="nickname">Ваш Ник</label>
       </div>
 
       <div className="form-floating mb-4">
-        <label htmlFor="password">Пароль</label>
         <input
           id="password"
           className="form-control"
@@ -56,6 +55,7 @@ const AuthForm = () => {
           onChange={formik.handleChange}
           value={formik.values.password}
         />
+        <label htmlFor="password">Пароль</label>
       </div>
 
       <button className="w-100 mb-3 btn btn-outline-primary" type="submit">Войти</button>
