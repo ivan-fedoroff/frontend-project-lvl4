@@ -1,65 +1,83 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable functional/no-expression-statements, consistent-return */
 
+import axios from 'axios';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
-
-/* const validate = (values) => {
-  const errors = {};
-
-  if (!values.firstName) {
-    const newErr1 = { ...errors, nickname: true };
-    return newErr1;
-  }
-
-  if (!values.password) {
-    const newErr2 = { ...errors, password: true };
-    return newErr2;
-  }
-
-  return errors;
-}; */
+import { Button, Form, FloatingLabel } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import useAuth from 'useAuth';
+import routes from '../routes';
 
 const AuthForm = () => {
+  const [authFailed, setAuthFailed] = useState(false);
+  const [errorText, setErrorText] = useState('');
+  const navigate = useNavigate();
+  const auth = useAuth();
+
   const formik = useFormik({
     initialValues: {
-      nickname: '',
+      username: '',
       password: '',
     },
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2)); // eslint-disable-line
+    onSubmit: async (values) => {
+      setAuthFailed(false);
+      try {
+        const response = await axios.post(routes.loginPath(), values, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        localStorage.setItem('userId', JSON.stringify(response.data));
+        navigate('/');
+        auth.logIn();
+      } catch (e) {
+        formik.setSubmitting(false);
+        if (e.isAxiosError && e.response.status === 401) {
+          setAuthFailed(true);
+          setErrorText('the username or password is incorrect');
+          return errorText;
+        }
+        setErrorText(e.message);
+      }
     },
   });
   return (
-    <form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>
+    <Form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>
       <h1 className="text-center mb-4">Войти</h1>
+      <fieldset disabled={formik.isSubmitting}>
+        <FloatingLabel
+          controlId="username"
+          label="Ваш Ник"
+          className="mb-3"
+        >
+          <Form.Control
+            type="text"
+            placeholder="Ваш Ник"
+            isInvalid={authFailed}
+            required
+            onChange={formik.handleChange}
+            value={formik.values.username}
+          />
+        </FloatingLabel>
 
-      <div className="form-floating mb-3">
-        <input
-          id="nickname"
-          className="form-control"
-          name="nickname"
-          type="text"
-          placeholder="Ваш Ник"
-          onChange={formik.handleChange}
-          value={formik.values.nickname}
-        />
-        <label htmlFor="nickname">Ваш Ник</label>
-      </div>
-
-      <div className="form-floating mb-4">
-        <input
-          id="password"
-          className="form-control"
-          name="password"
-          type="password"
-          placeholder="Пароль"
-          onChange={formik.handleChange}
-          value={formik.values.password}
-        />
-        <label htmlFor="password">Пароль</label>
-      </div>
-
-      <button className="w-100 mb-3 btn btn-outline-primary" type="submit">Войти</button>
-    </form>
+        <FloatingLabel
+          controlId="password"
+          label="Пароль"
+          className="mb-4"
+        >
+          <Form.Control
+            type="password"
+            placeholder="Пароль"
+            isInvalid={authFailed}
+            required
+            onChange={formik.handleChange}
+            value={formik.values.password}
+          />
+          <Form.Control.Feedback type="invalid">{errorText}</Form.Control.Feedback>
+        </FloatingLabel>
+        <Button variant="outline-primary" className="w-100 mb-3" type="submit">Войти</Button>
+      </fieldset>
+    </Form>
   );
 };
 

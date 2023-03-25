@@ -1,6 +1,7 @@
+import { Navigate } from 'react-router-dom';
 import logo from '../images/logo.svg';
 
-const MainPage = () => (
+const reactFish = () => (
   <div className="App">
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
@@ -20,5 +21,13 @@ const MainPage = () => (
     </header>
   </div>
 );
+
+const MainPage = () => {
+  const item = localStorage.getItem('userId');
+
+  return (
+    item ? reactFish() : <Navigate to="/login" />
+  );
+};
 
 export default MainPage;
