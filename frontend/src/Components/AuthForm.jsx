@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import { Button, Form, FloatingLabel } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import useAuth from 'useAuth';
+import useAuth from './useAuth';
 import routes from '../routes';
 
 const AuthForm = () => {
