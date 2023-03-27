@@ -3,7 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  channelsData: [],
+  channelsData: {},
 };
 
 const dataSlice = createSlice({
@@ -11,8 +11,8 @@ const dataSlice = createSlice({
   initialState,
 
   reducers: {
-    mountData: (state, action) => {
-      state.data = action.payload;
+    mountData: (state, { payload }) => {
+      state.channelsData = { ...state.channelsData, ...payload };
     },
   },
 });

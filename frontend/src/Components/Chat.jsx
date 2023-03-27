@@ -13,7 +13,7 @@ import { mountData } from '../slices/dataReducer';
 const renderChannelList = (channelList) => {
   if (channelList) {
     return (
-      <Nav pills fill="true" as="ul" id="channels-box" className="flex-column px-2 mb-3 overflow-auto h-100 d-block">
+      <Nav variant="pills" fill="true" as="ul" id="channels-box" className="flex-column px-2 mb-3 overflow-auto h-100 d-block">
         {channelList.map((channel) => {
           const key = channel.id;
           return (
@@ -67,7 +67,7 @@ const getAuthHeader = () => {
 
 const getChatHeader = (channelList, curChannelId) => {
   if (curChannelId) {
-    const currentChannelName = channelList.filter((channel) => channel.id === curChannelId).name;
+    const currentChannelName = channelList.filter((channel) => channel.id === curChannelId)[0].name;
     return `# ${currentChannelName}`;
   }
   return '# default';
@@ -81,7 +81,6 @@ const Chat = () => {
   useEffect(() => {
     const fetchContent = async () => {
       const { data } = await axios.get(routes.dataPath(), { headers: getAuthHeader() });
-      console.log(data);
       dispatch(mountData(data));
     };
 
