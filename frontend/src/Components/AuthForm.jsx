@@ -27,7 +27,9 @@ const AuthForm = () => {
             'Content-Type': 'application/json',
           },
         });
-        localStorage.setItem('userId', JSON.stringify(response.data));
+        const { token, username } = response.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('username', username);
         navigate('/');
         auth.logIn();
       } catch (e) {

@@ -1,4 +1,4 @@
-/* eslint-disable functional/no-expression-statements, consistent-return */
+/* eslint-disable functional/no-expression-statements, consistent-return, no-param-reassign */
 
 import axios from 'axios';
 import React, { useEffect } from 'react';
@@ -6,9 +6,23 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   Container, Row, Col, Nav, Button,
 } from 'react-bootstrap';
+// import { useLocation } from 'react-router-dom';
+import { Manager } from 'socket.io-client';
 
 import routes from '../routes';
-import { mountData } from '../slices/dataReducer';
+import { mountData, refreshMessages } from '../slices/dataReducer';
+import MessageForm from './MessageForm';
+
+const host = window.location.href;
+const manager = new Manager(host);
+const socket = manager.socket('/');
+
+const handleMessageSubmit = async (values, channelId, username, state) => {
+  const message = { ...values, ...{ channelId, username } };
+  await socket.timeout(1000).emit('newMessage', message, async (err) => {
+    state.values.body = err ? state.values.body : '';
+  });
+};
 
 const renderChannelList = (channelList) => {
   if (channelList) {
@@ -56,10 +70,10 @@ const renderMessagesList = (messagesList) => {
 };
 
 const getAuthHeader = () => {
-  const userId = JSON.parse(localStorage.getItem('userId'));
+  const token = localStorage.getItem('token');
 
-  if (userId && userId.token) {
-    return { Authorization: `Bearer ${userId.token}` };
+  if (token) {
+    return { Authorization: `Bearer ${token}` };
   }
 
   return {};
@@ -77,6 +91,10 @@ const Chat = () => {
   const channelsData = useSelector((state) => state.chatDataLoader.channelsData);
   const { channels, currentChannelId, messages } = channelsData;
   const dispatch = useDispatch();
+
+  socket.on('newMessage', (payload) => {
+    dispatch(refreshMessages(payload));
+  });
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -113,6 +131,7 @@ const Chat = () => {
               </span>
             </div>
             {renderMessagesList(messages)}
+            <MessageForm handleMessageSubmit={handleMessageSubmit} />
           </div>
         </Col>
       </Row>

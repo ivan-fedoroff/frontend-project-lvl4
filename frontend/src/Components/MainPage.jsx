@@ -2,10 +2,10 @@ import { Navigate } from 'react-router-dom';
 import Chat from './Chat';
 
 const MainPage = () => {
-  const item = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
 
   return (
-    item ? <Chat /> : <Navigate to="/login" />
+    token ? <Chat /> : <Navigate to="/login" />
   );
 };
 

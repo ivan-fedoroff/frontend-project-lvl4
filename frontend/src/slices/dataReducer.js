@@ -14,8 +14,14 @@ const dataSlice = createSlice({
     mountData: (state, { payload }) => {
       state.channelsData = { ...state.channelsData, ...payload };
     },
+
+    refreshMessages: (state, { payload }) => {
+      const { messages } = state.channelsData;
+      const getNewMessageIndex = () => messages.findIndex((message) => message.id === payload.id);
+      state.channelsData.messages = getNewMessageIndex() === -1 ? [...messages, payload] : messages;
+    },
   },
 });
 
-export const { mountData } = dataSlice.actions;
+export const { mountData, refreshMessages } = dataSlice.actions;
 export default dataSlice.reducer;
