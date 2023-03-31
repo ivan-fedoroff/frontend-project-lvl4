@@ -6,7 +6,7 @@ import { useFormik } from 'formik';
 import { Button, Form, FloatingLabel } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import useAuth from './useAuth';
-import routes from '../routes';
+import routes from '../utils/routes';
 
 const AuthForm = () => {
   const [authFailed, setAuthFailed] = useState(false);

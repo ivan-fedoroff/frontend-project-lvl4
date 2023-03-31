@@ -3,15 +3,19 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  Container, Row, Col, Nav, Button,
-} from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 // import { useLocation } from 'react-router-dom';
 import { Manager } from 'socket.io-client';
 
-import routes from '../routes';
-import { mountData, refreshMessages } from '../slices/dataReducer';
+import routes from '../utils/routes';
+import {
+  mountData, refreshMessages, backupMessages, setActiveChannel,
+} from '../slices/dataReducer';
 import MessageForm from './MessageForm';
+import renderChannelList from './renderChannelList';
+import renderMessagesList from './renderMessagesList';
+import getChatHeader from './getChatHeader';
+import getAuthHeader from '../utils/getAuthHeader';
 
 const host = window.location.href;
 const manager = new Manager(host);
@@ -24,73 +28,15 @@ const handleMessageSubmit = async (values, channelId, username, state) => {
   });
 };
 
-const renderChannelList = (channelList) => {
-  if (channelList) {
-    return (
-      <Nav variant="pills" fill="true" as="ul" id="channels-box" className="flex-column px-2 mb-3 overflow-auto h-100 d-block">
-        {channelList.map((channel) => {
-          const key = channel.id;
-          return (
-            <Nav.Item key={key} as="li" className="w-100">
-              <Button
-                variant="secondary"
-                className="w-100 rounded-0 text-start"
-                type="button"
-              >
-                <span className="me-1">#</span>
-                {channel.name}
-              </Button>
-            </Nav.Item>
-          );
-        })}
-      </Nav>
-    );
-  }
-  return null;
-};
-
-const renderMessagesList = (messagesList) => {
-  if (messagesList) {
-    return (
-      <div id="messages-box" className="overflow-auto px-5">
-        {messagesList.map((message) => {
-          const key = message.id;
-          return (
-            <div key={key} className="text-break mb-2">
-              <b>{message.username}</b>
-              :&nbsp;
-              {message.body}
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-  return null;
-};
-
-const getAuthHeader = () => {
-  const token = localStorage.getItem('token');
-
-  if (token) {
-    return { Authorization: `Bearer ${token}` };
-  }
-
-  return {};
-};
-
-const getChatHeader = (channelList, curChannelId) => {
-  if (curChannelId) {
-    const currentChannelName = channelList.filter((channel) => channel.id === curChannelId)[0].name;
-    return `# ${currentChannelName}`;
-  }
-  return '# default';
-};
-
 const Chat = () => {
   const channelsData = useSelector((state) => state.chatDataLoader.channelsData);
   const { channels, currentChannelId, messages } = channelsData;
   const dispatch = useDispatch();
+  const handleChannelChange = (channel, state) => {
+    const backup = { channelId: state.currentChannelId, messages: state.messages };
+    dispatch(backupMessages({ [currentChannelId]: backup }));
+    dispatch(setActiveChannel(channel));
+  };
 
   socket.on('newMessage', (payload) => {
     dispatch(refreshMessages(payload));
@@ -119,7 +65,7 @@ const Chat = () => {
               <span className="visually-hidden">+</span>
             </button>
           </div>
-          {renderChannelList(channels)}
+          {renderChannelList(channels, channelsData, handleChannelChange)}
         </Col>
         <Col className="p-0 h-100">
           <div className="d-flex flex-column h-100">
