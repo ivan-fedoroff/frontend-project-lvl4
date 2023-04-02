@@ -1,21 +1,20 @@
 /* eslint-disable functional/no-expression-statements, consistent-return, no-param-reassign */
 
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
 // import { useLocation } from 'react-router-dom';
 import { Manager } from 'socket.io-client';
-
 import routes from '../utils/routes';
-import {
-  mountData, refreshMessages, backupMessages, setActiveChannel,
-} from '../slices/dataReducer';
 import MessageForm from './MessageForm';
-import renderChannelList from './renderChannelList';
-import renderMessagesList from './renderMessagesList';
-import getChatHeader from './getChatHeader';
+import Channels from './Channels';
+import Messages from './Messages';
 import getAuthHeader from '../utils/getAuthHeader';
+// import renderModal from './modals/renderModal';
+
+import { actions as messagesActions, selectors as msgsSelectors } from '../slices/messagesSlice';
+import { actions as channelsActions, selectors as channelsSelectors } from '../slices/channelsSlice';
 
 const host = window.location.href;
 const manager = new Manager(host);
@@ -23,29 +22,36 @@ const socket = manager.socket('/');
 
 const handleMessageSubmit = async (values, channelId, username, state) => {
   const message = { ...values, ...{ channelId, username } };
-  await socket.timeout(1000).emit('newMessage', message, async (err) => {
+  await socket.timeout(500).emit('newMessage', message, async (err) => {
     state.values.body = err ? state.values.body : '';
   });
 };
 
 const Chat = () => {
-  const channelsData = useSelector((state) => state.chatDataLoader.channelsData);
-  const { channels, currentChannelId, messages } = channelsData;
+  const [curChannelId, setCurChannelId] = useState(null);
+  const [curChannelMsgs, setCurChannelMsgs] = useState([]);
+  const currentChannel = useSelector((state) => channelsSelectors.selectById(state, curChannelId));
+  const chatHeader = currentChannel ? currentChannel.name : 'default';
+  const msgs = useSelector(msgsSelectors.selectAll);
+  /* const [modalInfo, setModalInfo] = useState({ type: null, item: null });
+
+  const hideModal = () => setModalInfo({ type: null, item: null });
+  const showModal = (type, item = null) => setModalInfo({ type, item }); */
+
   const dispatch = useDispatch();
-  const handleChannelChange = (channel, state) => {
-    const backup = { channelId: state.currentChannelId, messages: state.messages };
-    dispatch(backupMessages({ [currentChannelId]: backup }));
-    dispatch(setActiveChannel(channel));
-  };
 
   socket.on('newMessage', (payload) => {
-    dispatch(refreshMessages(payload));
+    dispatch(messagesActions.addMessage(payload));
+    setCurChannelMsgs(msgs.filter((msg) => msg.channelId === curChannelId));
   });
 
   useEffect(() => {
     const fetchContent = async () => {
       const { data } = await axios.get(routes.dataPath(), { headers: getAuthHeader() });
-      dispatch(mountData(data));
+      dispatch(channelsActions.addChannels(data.channels));
+      dispatch(messagesActions.addMessages(data.messages));
+      setCurChannelId(data.currentChannelId);
+      setCurChannelMsgs(data.messages);
     };
 
     fetchContent();
@@ -65,19 +71,24 @@ const Chat = () => {
               <span className="visually-hidden">+</span>
             </button>
           </div>
-          {renderChannelList(channels, channelsData, handleChannelChange)}
+          <Channels setCurChannelId={setCurChannelId} setCurChannelMsgs={setCurChannelMsgs} />
         </Col>
         <Col className="p-0 h-100">
           <div className="d-flex flex-column h-100">
             <div className="bg-light mb-4 p-3 shadow-sm small">
-              <p className="m-o"><b>{getChatHeader(channels, currentChannelId)}</b></p>
+              <p className="m-o">
+                <b>
+                  #&nbsp;
+                  {chatHeader}
+                </b>
+              </p>
               <span className="text-muted">
-                {messages ? messages.length : 0}
+                {curChannelMsgs.length}
                 &nbsp;сообщений
               </span>
             </div>
-            {renderMessagesList(messages)}
-            <MessageForm handleMessageSubmit={handleMessageSubmit} />
+            <Messages curChannelMsgs={curChannelMsgs} />
+            <MessageForm handleMessageSubmit={handleMessageSubmit} curChannelId={curChannelId} />
           </div>
         </Col>
       </Row>

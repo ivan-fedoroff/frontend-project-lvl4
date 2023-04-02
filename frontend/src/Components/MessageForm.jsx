@@ -3,14 +3,10 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import { Form } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
 
-const MessageForm = (props) => {
+const MessageForm = ({ handleMessageSubmit, curChannelId }) => {
   const [btnBlocked, setBlocked] = useState(false);
-  const channelsData = useSelector((state) => state.chatDataLoader.channelsData);
-  const { currentChannelId } = channelsData;
   const username = localStorage.getItem('username');
-  const { handleMessageSubmit } = props;
 
   const formik = useFormik({
     initialValues: {
@@ -18,7 +14,7 @@ const MessageForm = (props) => {
     },
     onSubmit: async (values) => {
       setBlocked(true);
-      await handleMessageSubmit(values, currentChannelId, username, formik);
+      await handleMessageSubmit(values, curChannelId, username, formik);
       setBlocked(false);
     },
   });
