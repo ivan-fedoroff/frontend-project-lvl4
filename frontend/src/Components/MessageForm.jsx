@@ -1,11 +1,15 @@
-/* eslint-disable functional/no-expression-statements, consistent-return */
+/* eslint-disable functional/no-expression-statements,
+functional/no-conditional-statements, consistent-return */
 
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import { Form } from 'react-bootstrap';
 
-const MessageForm = ({ handleMessageSubmit, curChannelId }) => {
+import socket from '../utils/socket';
+
+const MessageForm = ({ curChannelId }) => {
   const [btnBlocked, setBlocked] = useState(false);
+  const [error, setError] = useState(false);
   const username = localStorage.getItem('username');
 
   const formik = useFormik({
@@ -13,8 +17,15 @@ const MessageForm = ({ handleMessageSubmit, curChannelId }) => {
       body: '',
     },
     onSubmit: async (values) => {
+      const message = { ...values, ...{ channelId: curChannelId, username } };
       setBlocked(true);
-      await handleMessageSubmit(values, curChannelId, username, formik);
+      await socket.emit('newMessage', message, async (response) => {
+        const { status } = await response;
+        formik.values.body = status === 'ok' ? '' : formik.values.body;
+        if (status !== 'ok') {
+          setError(true);
+        }
+      });
       setBlocked(false);
     },
   });
@@ -43,6 +54,7 @@ const MessageForm = ({ handleMessageSubmit, curChannelId }) => {
             </svg>
             <span className="visually-hidden">Отправить</span>
           </button>
+          {error ? <div className="text-danger">Проблемы с сетью, попробуйте позже</div> : null}
         </Form.Group>
       </Form>
     </div>

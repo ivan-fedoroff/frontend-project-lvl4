@@ -1,6 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-const Messages = ({ curChannelMsgs }) => {
+import { selectors } from '../slices/messagesSlice';
+
+const Messages = ({ curChannelId }) => {
+  const curChannelMsgs = useSelector(selectors.selectAll)
+    .filter((msg) => msg.channelId === curChannelId);
   if (curChannelMsgs.length === 0) {
     return null;
   }

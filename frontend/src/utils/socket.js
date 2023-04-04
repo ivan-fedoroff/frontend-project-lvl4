@@ -1,7 +1,5 @@
-import { Manager } from 'socket.io-client';
+import { io } from 'socket.io-client';
 
-const host = window.location.href;
-const manager = new Manager(host);
-const socket = manager.socket('/');
+const socket = io();
 
 export default socket;

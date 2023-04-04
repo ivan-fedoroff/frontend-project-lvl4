@@ -1,18 +1,19 @@
 /* eslint-disable functional/no-expression-statements, no-param-reassign */
 
-import { Nav, Button } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import ChannelItem from './CnannelItem';
 
-import { selectors as msgsSelectors } from '../slices/messagesSlice';
 import { selectors as channelsSelectors } from '../slices/channelsSlice';
 
-const Channels = ({ setCurChannelId, setCurChannelMsgs }) => {
+const Channels = (props) => {
+  const {
+    curChannelId, setCurChannelId, showModal,
+  } = props;
   const channels = useSelector(channelsSelectors.selectAll);
-  const msgs = useSelector(msgsSelectors.selectAll);
-  const handleClick = (channel) => {
-    setCurChannelId(channel.id);
-    setCurChannelMsgs(msgs.filter((msg) => msg.channelId === channel.id));
+  const handleClick = (id) => {
+    setCurChannelId(id);
   };
 
   if (channels.length === 0) {
@@ -25,15 +26,12 @@ const Channels = ({ setCurChannelId, setCurChannelMsgs }) => {
         const key = channel.id;
         return (
           <Nav.Item key={key} as="li" className="w-100">
-            <Button
-              variant="secondary"
-              className="w-100 rounded-0 text-start"
-              type="button"
-              onClick={() => handleClick(channel)}
-            >
-              <span className="me-1">#</span>
-              {channel.name}
-            </Button>
+            <ChannelItem
+              channel={channel}
+              handleClick={handleClick}
+              showModal={showModal}
+              curChannelId={curChannelId}
+            />
           </Nav.Item>
         );
       })}
