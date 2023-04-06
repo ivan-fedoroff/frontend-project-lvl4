@@ -7,6 +7,7 @@ import AuthContext from './Components/AuthContext';
 import NotFound from './Components/NotFound';
 import MainPage from './Components/MainPage';
 import AuthPage from './Components/AuthPage';
+import RegPage from './Components/RegPage';
 import Layout from './Components/Layout';
 
 const AuthProvider = ({ children }) => {
@@ -14,7 +15,8 @@ const AuthProvider = ({ children }) => {
 
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
-    localStorage.removeItem('userId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
     setLoggedIn(false);
   };
 
@@ -34,6 +36,7 @@ const App = () => (
             <Route index element={<MainPage />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/login" element={<AuthPage />} />
+            <Route path="/signup" element={<RegPage />} />
           </Route>
         </Routes>
       </div>

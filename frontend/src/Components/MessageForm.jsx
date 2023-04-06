@@ -1,9 +1,9 @@
 /* eslint-disable functional/no-expression-statements,
 functional/no-conditional-statements, consistent-return */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useFormik } from 'formik';
-import { Form } from 'react-bootstrap';
+import { Form, InputGroup } from 'react-bootstrap';
 
 import socket from '../utils/socket';
 
@@ -11,6 +11,11 @@ const MessageForm = ({ curChannelId }) => {
   const [btnBlocked, setBlocked] = useState(false);
   const [error, setError] = useState(false);
   const username = localStorage.getItem('username');
+
+  const inputRef = useRef();
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -36,16 +41,17 @@ const MessageForm = ({ curChannelId }) => {
         noValidate
         onSubmit={formik.handleSubmit}
       >
-        <Form.Group>
+        <InputGroup>
           <Form.Control
             className="border-0 p-0 ps-2"
             name="body"
             aria-label="Новое сообщение"
             placeholder="Введите сообщение..."
+            ref={inputRef}
             onChange={formik.handleChange}
             value={formik.values.body}
           />
-          <button className="p-o text-primary btn btn-group-vertical" type="submit" disabled={formik.values.body === '' || btnBlocked}>
+          <button className="btn btn-group-vertical" type="submit" disabled={formik.values.body === '' || btnBlocked}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
               <path
                 fillRule="evenodd"
@@ -55,7 +61,7 @@ const MessageForm = ({ curChannelId }) => {
             <span className="visually-hidden">Отправить</span>
           </button>
           {error ? <div className="text-danger">Проблемы с сетью, попробуйте позже</div> : null}
-        </Form.Group>
+        </InputGroup>
       </Form>
     </div>
   );
