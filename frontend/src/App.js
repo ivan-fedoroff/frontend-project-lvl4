@@ -1,8 +1,9 @@
 /* eslint-disable functional/no-expression-statements, consistent-return */
 
 import './App.css';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import AuthContext from './Components/AuthContext';
 import NotFound from './Components/NotFound';
 import MainPage from './Components/MainPage';
@@ -20,6 +21,17 @@ const AuthProvider = ({ children }) => {
     setLoggedIn(false);
   };
 
+  useEffect(() => {
+    document.body.classList.add(
+      'h-100',
+      'bg-light',
+    );
+    const html = document.querySelector('html');
+    html.classList.add('h-100');
+    const root = document.getElementById('root');
+    root.classList.add('h-100');
+  });
+
   return (
     <AuthContext.Provider value={useMemo(() => ({ loggedIn, logIn, logOut }), [loggedIn])}>
       {children}
@@ -30,7 +42,7 @@ const AuthProvider = ({ children }) => {
 const App = () => (
   <AuthProvider>
     <BrowserRouter>
-      <div className="h-100 bg-light">
+      <div className="h-100">
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<MainPage />} />

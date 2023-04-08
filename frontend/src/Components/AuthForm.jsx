@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import { Button, Form, FloatingLabel } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
 import useAuth from './useAuth';
 import routes from '../utils/routes';
 
@@ -13,6 +15,7 @@ const AuthForm = () => {
   const [errorText, setErrorText] = useState('');
   const navigate = useNavigate();
   const auth = useAuth();
+  const { t } = useTranslation();
 
   const formik = useFormik({
     initialValues: {
@@ -37,7 +40,7 @@ const AuthForm = () => {
         formik.setSubmitting(false);
         if (e.isAxiosError && e.response.status === 401) {
           setAuthFailed(true);
-          setErrorText('the username or password is incorrect');
+          setErrorText(t('feedback.errorAuth'));
           return errorText;
         }
         setErrorText(e.message);
@@ -47,16 +50,16 @@ const AuthForm = () => {
 
   return (
     <Form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>
-      <h1 className="text-center mb-4">Войти</h1>
+      <h1 className="text-center mb-4">{t('main.signin')}</h1>
       <fieldset disabled={formik.isSubmitting}>
         <FloatingLabel
           controlId="username"
-          label="Ваш Ник"
+          label={t('forms.username')}
           className="mb-3"
         >
           <Form.Control
             type="text"
-            placeholder="Ваш Ник"
+            placeholder={t('forms.username')}
             isInvalid={authFailed}
             required
             onChange={formik.handleChange}
@@ -66,12 +69,12 @@ const AuthForm = () => {
 
         <FloatingLabel
           controlId="password"
-          label="Пароль"
+          label={t('forms.password')}
           className="mb-4"
         >
           <Form.Control
             type="password"
-            placeholder="Пароль"
+            placeholder={t('forms.password')}
             isInvalid={authFailed}
             required
             onChange={formik.handleChange}
@@ -79,7 +82,7 @@ const AuthForm = () => {
           />
           <Form.Control.Feedback type="invalid">{errorText}</Form.Control.Feedback>
         </FloatingLabel>
-        <Button variant="outline-primary" className="w-100 mb-3" type="submit">Войти</Button>
+        <Button variant="outline-primary" className="w-100 mb-3" type="submit">{t('buttons.signin')}</Button>
       </fieldset>
     </Form>
   );

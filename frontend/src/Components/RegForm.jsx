@@ -7,26 +7,29 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Button, Form, FloatingLabel } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+
 import routes from '../utils/routes';
 import useAuth from './useAuth';
-
-const regSchema = Yup.object().shape({
-  username: Yup.string()
-    .required()
-    .min(3, 'От трех до 20 символов')
-    .max(20, 'От трех до 20 символов'),
-  password: Yup.string()
-    .required()
-    .min(6, 'Не менее 6 символов'),
-  confirmPassword: Yup.mixed()
-    .required()
-    .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать'),
-});
 
 const RegForm = () => {
   const [networkError, setNetworkError] = useState(false);
   const auth = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const regSchema = Yup.object().shape({
+    username: Yup.string()
+      .required()
+      .min(3, t('feedback.errorNameLength'))
+      .max(20, t('feedback.errorNameLength')),
+    password: Yup.string()
+      .required()
+      .min(6, t('feedback.errorPassword')),
+    confirmPassword: Yup.mixed()
+      .required()
+      .oneOf([Yup.ref('password'), null], t('feedback.errorPassConf')),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -51,9 +54,8 @@ const RegForm = () => {
         navigate('/');
         auth.logIn();
       } catch (e) {
-        console.log(e);
         if (e.response.status === 409) {
-          formik.errors.username = 'Такой пользователь уже существует';
+          formik.errors.username = t('feedback.errorNameDouble');
           formik.touched.username = true;
         } else {
           setNetworkError(e.message);
@@ -64,15 +66,15 @@ const RegForm = () => {
 
   return (
     <Form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>
-      <h1 className="text-center mb-4">Регистрация</h1>
+      <h1 className="text-center mb-4">{t('main.signup')}</h1>
       <FloatingLabel
         controlId="username"
-        label="Ваш Ник"
+        label={t('forms.username')}
         className="mb-3"
       >
         <Form.Control
           type="text"
-          placeholder="Ваш Ник"
+          placeholder={t('forms.username')}
           required
           isInvalid={formik.touched.username && formik.errors.username}
           onBlur={formik.handleBlur}
@@ -84,12 +86,12 @@ const RegForm = () => {
 
       <FloatingLabel
         controlId="password"
-        label="Пароль"
+        label={t('forms.password')}
         className="mb-4"
       >
         <Form.Control
           type="password"
-          placeholder="Пароль"
+          placeholder={t('forms.password')}
           required
           isInvalid={formik.touched.password && formik.errors.password}
           onBlur={formik.handleBlur}
@@ -100,12 +102,12 @@ const RegForm = () => {
       </FloatingLabel>
       <FloatingLabel
         controlId="confirmPassword"
-        label="Подтвердите пароль"
+        label={t('forms.confirmPass')}
         className="mb-4"
       >
         <Form.Control
           type="password"
-          placeholder="Подтвердите пароль"
+          placeholder={t('forms.confirmPass')}
           required
           isInvalid={formik.touched.confirmPassword && formik.errors.confirmPassword}
           onBlur={formik.handleBlur}
@@ -115,7 +117,7 @@ const RegForm = () => {
         <Form.Control.Feedback tooltip type="invalid">{formik.errors.confirmPassword}</Form.Control.Feedback>
       </FloatingLabel>
       {networkError ? <div>{networkError}</div> : null}
-      <Button variant="outline-primary" className="w-100 mb-3" type="submit">Войти</Button>
+      <Button variant="outline-primary" className="w-100 mb-3" type="submit">{t('buttons.signup')}</Button>
     </Form>
   );
 };

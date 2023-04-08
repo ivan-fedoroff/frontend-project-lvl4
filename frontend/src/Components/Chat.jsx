@@ -5,6 +5,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+
 import socket from '../utils/socket';
 import routes from '../utils/routes';
 import MessageForm from './MessageForm';
@@ -17,6 +19,7 @@ import { actions as messagesActions, selectors as msgsSelectors } from '../slice
 import { actions as channelsActions, selectors as channelsSelectors } from '../slices/channelsSlice';
 
 const Chat = () => {
+  const { t } = useTranslation();
   const [curChannelId, setCurChannelId] = useState(null);
   const currentChannel = useSelector((state) => channelsSelectors.selectById(state, curChannelId));
   const chatHeader = currentChannel ? currentChannel.name : 'default';
@@ -65,7 +68,7 @@ const Chat = () => {
       <Row className="h-100 bg-white flex-md-row">
         <Col md="2" className="col-4 border-end px-0 bg-light flex-column h-100 d-flex">
           <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-            <b>Каналы</b>
+            <b>{t('main.channels')}</b>
             <button className="p-o text-primary btn btn-group-vertical" type="button" onClick={() => showModal('adding')}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
                 <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
@@ -91,8 +94,7 @@ const Chat = () => {
                 </b>
               </p>
               <span className="text-muted">
-                {curChannelMsgs.length}
-                &nbsp;сообщений
+                {t('chatHeaderMsgs.msg', { count: curChannelMsgs.length })}
               </span>
             </div>
             <Messages curChannelId={curChannelId} />
