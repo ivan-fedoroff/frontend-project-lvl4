@@ -3,6 +3,8 @@
 import './App.css';
 import React, { useState, useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import AuthContext from './Components/AuthContext';
 import NotFound from './Components/NotFound';
@@ -51,6 +53,8 @@ const App = () => (
             <Route path="/signup" element={<RegPage />} />
           </Route>
         </Routes>
+        <ToastContainer />
+
       </div>
 
     </BrowserRouter>

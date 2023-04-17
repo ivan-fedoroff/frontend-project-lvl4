@@ -10,7 +10,7 @@ import { Button, Form, FloatingLabel } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import routes from '../utils/routes';
-import useAuth from './useAuth';
+import useAuth from './hooks/useAuth';
 
 const RegForm = () => {
   const [networkError, setNetworkError] = useState(false);

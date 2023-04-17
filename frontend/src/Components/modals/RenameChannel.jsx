@@ -5,28 +5,39 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { Modal, Form, Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 import socket from '../../utils/socket';
 import { selectors } from '../../slices/channelsSlice';
 
 const Rename = (props) => {
   const { id, onHide } = props;
+  const { t } = useTranslation();
   const channels = useSelector(selectors.selectAll);
   const curChannel = useSelector((state) => selectors.selectById(state, id));
+
+  const displaySuccess = () => {
+    toast.success(t('feedback.successRenaming'));
+  };
+
   const formik = useFormik({
     initialValues: { name: curChannel.name },
     validate: (values) => {
       const errors = {};
       if (channels.findIndex((channel) => channel.name === values.name) >= 0) {
-        errors.name = 'Канал с таким именем уже существует';
+        errors.name = t('feedback.errorChannelExist');
       }
       return errors;
     },
     onSubmit: async (values) => {
       socket.emit('renameChannel', { id, name: values.name }, async (response) => {
         const { status } = await response;
+        if (status === 'ok') {
+          onHide();
+          displaySuccess();
+        }
         formik.values.body = status === 'ok' ? '' : formik.values.body;
-        onHide();
       });
     },
   });
@@ -39,7 +50,7 @@ const Rename = (props) => {
   return (
     <Modal show>
       <Modal.Header closeButton onHide={onHide}>
-        <Modal.Title>Переименовать канал</Modal.Title>
+        <Modal.Title>{t('titles.rename')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
@@ -53,12 +64,12 @@ const Rename = (props) => {
               value={formik.values.name}
               name="name"
             />
-            <Form.Label className="visually-hidden">Имя канала</Form.Label>
+            <Form.Label className="visually-hidden">{t('labels.channelName')}</Form.Label>
             {formik.errors.name ? <div className="text-danger">{formik.errors.name}</div> : null}
           </Form.Group>
           <div className="d-flex justify-content-end">
-            <Button variant="secondary" className="me-2" onClick={() => onHide()}>Отменить</Button>
-            <Button type="submit" variant="primary">Отправить</Button>
+            <Button variant="secondary" className="me-2" onClick={() => onHide()}>{t('buttons.escape')}</Button>
+            <Button type="submit" variant="primary">{t('buttons.send')}</Button>
           </div>
         </Form>
       </Modal.Body>

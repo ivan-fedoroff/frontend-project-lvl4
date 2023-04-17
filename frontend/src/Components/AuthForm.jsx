@@ -7,8 +7,9 @@ import { Button, Form, FloatingLabel } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import useAuth from './useAuth';
+import useAuth from './hooks/useAuth';
 import routes from '../utils/routes';
+import useNetErrToast from './hooks/useNetErrToast';
 
 const AuthForm = () => {
   const [authFailed, setAuthFailed] = useState(false);
@@ -16,6 +17,7 @@ const AuthForm = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const { t } = useTranslation();
+  const displayNetErr = useNetErrToast();
 
   const formik = useFormik({
     initialValues: {
@@ -43,7 +45,7 @@ const AuthForm = () => {
           setErrorText(t('feedback.errorAuth'));
           return errorText;
         }
-        setErrorText(e.message);
+        displayNetErr();
       }
     },
   });

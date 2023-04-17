@@ -1,25 +1,35 @@
 /* eslint-disable functional/no-expression-statements,
 functional/no-conditional-statements, no-param-reassign */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 
 import socket from '../../utils/socket';
 import { selectors } from '../../slices/channelsSlice';
+import useNetErrToast from '../hooks/useNetErrToast';
 
 const Remove = (props) => {
   const { id, onHide } = props;
-  const { error, setError } = useState(false);
+  const { t } = useTranslation();
   const curChannel = useSelector((state) => selectors.selectById(state, id));
+
+  const displaySuccess = () => {
+    toast.success(t('feedback.successRemoving'));
+  };
+
+  const displayNetErr = useNetErrToast();
 
   const handleClick = (currentId) => {
     socket.emit('removeChannel', { id: currentId }, async (response) => {
       const { status } = await response;
       if (status === 'ok') {
+        displaySuccess();
         onHide();
       } else {
-        setError(true);
+        displayNetErr();
       }
     });
   };
@@ -33,17 +43,16 @@ const Remove = (props) => {
     <Modal show>
       <Modal.Header closeButton onHide={onHide}>
         <Modal.Title>
-          Удалить канал&nbsp;
+          {t('titles.remove')}
           {curChannel.name ?? 'default'}
           &nbsp;?
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="d-flex justify-content-end">
-          <Button variant="secondary" className="me-2" onClick={() => onHide()}>Отменить</Button>
-          <Button variant="primary" onClick={() => handleClick(id)} ref={buttonRef}>Удалить</Button>
+          <Button variant="secondary" className="me-2" onClick={() => onHide()}>{t('buttons.escape')}</Button>
+          <Button variant="danger" onClick={() => handleClick(id)} ref={buttonRef}>{t('buttons.removeChannel')}</Button>
         </div>
-        {error ? <div className="text-danger">Ошибка сети, повторите ошибку позже</div> : null}
       </Modal.Body>
     </Modal>
   );

@@ -4,7 +4,7 @@ import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import useAuth from './useAuth';
+import useAuth from './hooks/useAuth';
 
 const Layout = () => {
   const auth = useAuth();

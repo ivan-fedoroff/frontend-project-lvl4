@@ -4,6 +4,9 @@ export default {
       signin: 'Войти',
       signup: 'Зарегистрироваться',
       logout: 'Выйти',
+      escape: 'Отмена',
+      send: 'Отправить',
+      removeChannel: 'Удалить',
     },
     main: {
       signup: 'Регистрация',
@@ -18,20 +21,29 @@ export default {
       message: 'Введите сообщение...',
     },
     feedback: {
+      errorNetwork: 'Ошибка сети',
       errorNameLength: 'От 3 до 20 символов',
       errorPassword: 'Не менее 6 символов',
       errorNameDouble: 'Такой пользователь уже существует',
-      errorNetwork: 'Ошибка сети',
       errorPassConf: 'Пароли должны совпадать',
-      errorAuth: 'the username or password is incorrect',
+      errorAuth: 'Неверные имя пользователя и пароль',
+      errorChannelExist: 'Должно быть уникальным',
+      successRemoving: 'Канал удален',
+      successAdding: 'Канал создан',
+      successRenaming: 'Канал переименован',
     },
     chatHeaderMsgs: {
       msg_one: '{{count}} сообщение',
       msg_few: '{{count}} сообщения',
       msg_many: '{{count}} сообщений',
     },
+    titles: {
+      add: 'Добавить канал',
+      remove: 'Удалить канал ',
+      rename: 'Переименовать канал',
+    },
     labels: {
-      send: 'Отправить',
+      channelName: 'Имя канала',
     },
   },
 };

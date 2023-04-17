@@ -14,6 +14,7 @@ import Channels from './Channels';
 import Messages from './Messages';
 import getAuthHeader from '../utils/getAuthHeader';
 import renderModal from './modals/renderModal';
+import useNetErrToast from './hooks/useNetErrToast';
 
 import { actions as messagesActions, selectors as msgsSelectors } from '../slices/messagesSlice';
 import { actions as channelsActions, selectors as channelsSelectors } from '../slices/channelsSlice';
@@ -25,6 +26,8 @@ const Chat = () => {
   const chatHeader = currentChannel ? currentChannel.name : 'default';
   const msgs = useSelector(msgsSelectors.selectAll);
   const curChannelMsgs = msgs.filter((msg) => msg.channelId === curChannelId);
+
+  const displayNetErr = useNetErrToast();
 
   const [modalInfo, setModalInfo] = useState({ type: null, item: null });
 
@@ -54,14 +57,18 @@ const Chat = () => {
 
   useEffect(() => {
     const fetchContent = async () => {
-      const { data } = await axios.get(routes.dataPath(), { headers: getAuthHeader() });
-      dispatch(channelsActions.addChannels(data.channels));
-      dispatch(messagesActions.addMessages(data.messages));
-      setCurChannelId(data.currentChannelId);
+      try {
+        const { data } = await axios.get(routes.dataPath(), { headers: getAuthHeader() });
+        dispatch(channelsActions.addChannels(data.channels));
+        dispatch(messagesActions.addMessages(data.messages));
+        setCurChannelId(data.currentChannelId);
+      } catch {
+        displayNetErr();
+      }
     };
 
     fetchContent();
-  }, [dispatch]);
+  }, [dispatch, displayNetErr]);
 
   return (
     <Container className="h-100 my-4 overflow-hidden rounded shadow">
