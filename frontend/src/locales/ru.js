@@ -28,6 +28,7 @@ export default {
       errorPassConf: 'Пароли должны совпадать',
       errorAuth: 'Неверные имя пользователя и пароль',
       errorChannelExist: 'Должно быть уникальным',
+      errorProfanity: 'Не должно быть нецензурным',
       successRemoving: 'Канал удален',
       successAdding: 'Канал создан',
       successRenaming: 'Канал переименован',

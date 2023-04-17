@@ -5,14 +5,27 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import filter from 'leo-profanity';
 
 import socket from '../utils/socket';
+import useNetErrToast from './hooks/useNetErrToast';
 
 const MessageForm = ({ curChannelId }) => {
   const [btnBlocked, setBlocked] = useState(false);
-  const [error, setError] = useState(false);
   const username = localStorage.getItem('username');
   const { t } = useTranslation();
+  const displayNetErr = useNetErrToast();
+  filter.loadDictionary('ru');
+
+  const validate = (values) => {
+    const errors = {};
+
+    if (filter.check(values.body)) {
+      errors.body = t('feedback.errorProfanity');
+    }
+
+    return errors;
+  };
 
   const inputRef = useRef();
   useEffect(() => {
@@ -23,22 +36,25 @@ const MessageForm = ({ curChannelId }) => {
     initialValues: {
       body: '',
     },
+    validate,
     onSubmit: async (values) => {
       const message = { ...values, ...{ channelId: curChannelId, username } };
       setBlocked(true);
-      setError(false);
       await socket.emit('newMessage', message, async (response) => {
         const { status } = await response;
         formik.values.body = status === 'ok' ? '' : formik.values.body;
         if (status !== 'ok') {
-          setError(true);
+          displayNetErr();
         }
       });
       setBlocked(false);
     },
   });
+
+  console.log(formik.errors);
+
   return (
-    <div className="mt-auto px-5 py-3">
+    <div className="mt-auto px-5 py-4">
       <Form
         className="py-1 border rounded-2"
         noValidate
@@ -50,10 +66,13 @@ const MessageForm = ({ curChannelId }) => {
             name="body"
             aria-label="Новое сообщение"
             placeholder={t('forms.message')}
+            isInvalid={formik.errors.body}
             ref={inputRef}
+            onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             value={formik.values.body}
           />
+          <Form.Control.Feedback tooltip type="invalid">{formik.errors.body}</Form.Control.Feedback>
           <button className="btn btn-group-vertical" type="submit" disabled={formik.values.body === '' || btnBlocked}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
               <path
@@ -63,7 +82,6 @@ const MessageForm = ({ curChannelId }) => {
             </svg>
             <span className="visually-hidden">{t('buttons.send')}</span>
           </button>
-          {error ? <div className="text-danger">{t('feedback.errorNetwork')}</div> : null}
         </InputGroup>
       </Form>
     </div>
