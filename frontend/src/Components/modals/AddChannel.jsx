@@ -63,9 +63,10 @@ const Add = (props) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.name}
+              id="name"
               name="name"
             />
-            <Form.Label className="visually-hidden">{t('labels.channelName')}</Form.Label>
+            <Form.Label className="visually-hidden" for="name">{t('labels.channelName')}</Form.Label>
             {formik.errors.name ? <div className="text-danger">{formik.errors.name}</div> : null}
           </Form.Group>
           <div className="d-flex justify-content-end">
