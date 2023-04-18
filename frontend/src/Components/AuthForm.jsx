@@ -48,7 +48,7 @@ const AuthForm = () => {
           return errorText;
         }
         const user = values.username;
-        rollbar.error('Error registration', e, { user });
+        rollbar.error('Error login', e, { user });
         displayNetErr();
       }
     },

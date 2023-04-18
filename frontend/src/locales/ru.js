@@ -27,7 +27,7 @@ export default {
       errorPassword: 'Не менее 6 символов',
       errorNameDouble: 'Такой пользователь уже существует',
       errorPassConf: 'Пароли должны совпадать',
-      errorAuth: 'Неверные имя пользователя и пароль',
+      errorAuth: 'Неверные имя пользователя или пароль',
       errorChannelExist: 'Должно быть уникальным',
       errorProfanity: 'Не должно быть нецензурным',
       successRemoving: 'Канал удален',
