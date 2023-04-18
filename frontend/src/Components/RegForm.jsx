@@ -1,6 +1,3 @@
-/* eslint-disable functional/no-expression-statements,
-functional/no-conditional-statements, consistent-return */
-
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -49,17 +46,22 @@ const RegForm = () => {
           },
         });
         const { token } = response.data;
+        /* eslint-disable functional/no-expression-statements */
         localStorage.setItem('token', token);
         localStorage.setItem('username', username);
         navigate('/');
         auth.logIn();
+        /* eslint-enable */
       } catch (e) {
+        /* eslint-disable functional/no-expression-statements,
+functional/no-conditional-statements */
         if (e.response.status === 409) {
           formik.errors.username = t('feedback.errorNameDouble');
           formik.touched.username = true;
         } else {
           setNetworkError(e.message);
         }
+        /* eslint-enable */
       }
     },
   });

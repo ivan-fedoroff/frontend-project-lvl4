@@ -1,6 +1,3 @@
-/* eslint-disable functional/no-expression-statements,
-functional/no-conditional-statements, consistent-return */
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { Form, InputGroup } from 'react-bootstrap';
@@ -20,9 +17,11 @@ const MessageForm = ({ curChannelId }) => {
   const user = localStorage.getItem('username');
 
   const inputRef = useRef();
+  /* eslint-disable functional/no-expression-statements */
   useEffect(() => {
     inputRef.current.focus();
   }, []);
+  /* eslint-enable */
 
   const formik = useFormik({
     initialValues: {
@@ -31,7 +30,8 @@ const MessageForm = ({ curChannelId }) => {
     onSubmit: async (values) => {
       const body = filter.clean(values.body);
       const message = { body, channelId: curChannelId, username };
-      console.log(message);
+      /* eslint-disable functional/no-expression-statements,
+functional/no-conditional-statements */
       setBlocked(true);
 
       await socket.emit('newMessage', message, async (response) => {
@@ -44,6 +44,7 @@ const MessageForm = ({ curChannelId }) => {
         }
       });
       setBlocked(false);
+      /* eslint-enable */
     },
   });
 

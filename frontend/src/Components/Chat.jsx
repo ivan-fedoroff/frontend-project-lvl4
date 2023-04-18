@@ -1,8 +1,3 @@
-/* eslint-disable functional/no-expression-statements,
-functional/no-conditional-statements,
-consistent-return, no-param-reassign,
-react-hooks/exhaustive-deps */
-
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -41,6 +36,7 @@ const Chat = () => {
 
   const dispatch = useDispatch();
 
+  /* eslint-disable functional/no-expression-statements, react-hooks/exhaustive-deps */
   socket.on('newMessage', (payload) => {
     dispatch(messagesActions.addMessage(payload));
   });
@@ -54,9 +50,8 @@ const Chat = () => {
   });
 
   socket.on('removeChannel', (payload) => {
-    if (payload.id === curChannelId) {
-      setCurChannelId(1);
-    }
+    const activeId = payload.id === curChannelId ? 1 : curChannelId;
+    setCurChannelId(activeId);
     dispatch(channelsActions.removeChannel(payload.id));
   });
 
@@ -75,6 +70,7 @@ const Chat = () => {
 
     fetchContent();
   }, []);
+  /* eslint-enable */
 
   return (
     <Container className="h-100 my-4 overflow-hidden rounded shadow">

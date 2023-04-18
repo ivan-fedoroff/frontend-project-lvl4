@@ -1,5 +1,3 @@
-/* eslint-disable functional/no-expression-statements */
-
 import React from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
@@ -12,8 +10,10 @@ const Layout = () => {
   const { t } = useTranslation();
 
   const handleClick = () => {
+    /* eslint-disable functional/no-expression-statements */
     auth.logOut();
     navigate('/login');
+    /* eslint-enable */
   };
 
   return (

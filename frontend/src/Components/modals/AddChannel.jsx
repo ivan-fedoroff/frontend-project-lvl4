@@ -1,6 +1,3 @@
-/* eslint-disable functional/no-expression-statements,
-functional/no-conditional-statements, no-param-reassign */
-
 import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
@@ -17,7 +14,9 @@ const Add = (props) => {
   const channels = useSelector(selectors.selectAll);
 
   const displaySuccess = () => {
+    /* eslint-disable functional/no-expression-statements */
     toast.success(t('feedback.successAdding'));
+    /* eslint-enable */
   };
 
   const formik = useFormik({
@@ -25,12 +24,16 @@ const Add = (props) => {
     validate: (values) => {
       const errors = {};
       if (channels.findIndex((channel) => channel.name === values.name) >= 0) {
+        /* eslint-disable functional/no-expression-statements */
         errors.name = t('feedback.errorChannelExist');
+        /* eslint-enable */
+        return errors;
       }
       return errors;
     },
 
     onSubmit: async (values) => {
+      /* eslint-disable functional/no-expression-statements, functional/no-conditional-statements */
       socket.emit('newChannel', values, async (response) => {
         const { status, data } = await response;
         if (status === 'ok') {
@@ -40,13 +43,16 @@ const Add = (props) => {
         }
         formik.values.body = status === 'ok' ? '' : formik.values.body;
       });
+      /* eslint-enable */
     },
   });
 
   const inputRef = useRef();
+  /* eslint-disable functional/no-expression-statements */
   useEffect(() => {
     inputRef.current.focus();
   }, []);
+  /* eslint-enable */
 
   return (
     <Modal show>

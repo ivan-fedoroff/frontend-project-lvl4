@@ -1,6 +1,3 @@
-/* eslint-disable functional/no-expression-statements,
-functional/no-conditional-statements, no-param-reassign */
-
 import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
@@ -18,7 +15,9 @@ const Rename = (props) => {
   const curChannel = useSelector((state) => selectors.selectById(state, id));
 
   const displaySuccess = () => {
+    /* eslint-disable functional/no-expression-statements */
     toast.success(t('feedback.successRenaming'));
+    /* eslint-enable */
   };
 
   const formik = useFormik({
@@ -26,11 +25,15 @@ const Rename = (props) => {
     validate: (values) => {
       const errors = {};
       if (channels.findIndex((channel) => channel.name === values.name) >= 0) {
+        /* eslint-disable functional/no-expression-statements */
         errors.name = t('feedback.errorChannelExist');
+        /* eslint-enable */
+        return errors;
       }
       return errors;
     },
     onSubmit: async (values) => {
+      /* eslint-disable functional/no-expression-statements, functional/no-conditional-statements */
       socket.emit('renameChannel', { id, name: values.name }, async (response) => {
         const { status } = await response;
         if (status === 'ok') {
@@ -39,13 +42,16 @@ const Rename = (props) => {
         }
         formik.values.body = status === 'ok' ? '' : formik.values.body;
       });
+      /* eslint-enable */
     },
   });
 
   const inputRef = useRef();
+  /* eslint-disable functional/no-expression-statements */
   useEffect(() => {
     inputRef.current.focus();
   }, []);
+  /* eslint-enable */
 
   return (
     <Modal show>

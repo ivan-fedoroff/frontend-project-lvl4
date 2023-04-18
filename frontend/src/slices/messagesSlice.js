@@ -1,5 +1,3 @@
-/* eslint-disable functional/no-expression-statements, no-param-reassign */
-
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 
 import { actions as channelsActions } from './channelsSlice';
@@ -16,11 +14,13 @@ const messagesSlice = createSlice({
     addMessage: messagesAdapter.addOne,
   },
   extraReducers: (builder) => {
+    /* eslint-disable functional/no-expression-statements */
     builder.addCase(channelsActions.removeChannel, (state, action) => {
       const id = action.payload;
       const restEntities = Object.values(state.entities).filter((e) => e.channelId === id);
       messagesAdapter.setAll(state, restEntities);
     });
+    /* eslint-enable */
   },
 });
 

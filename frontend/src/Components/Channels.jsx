@@ -1,5 +1,3 @@
-/* eslint-disable functional/no-expression-statements, no-param-reassign */
-
 import { Nav } from 'react-bootstrap';
 import React from 'react';
 import { useSelector } from 'react-redux';

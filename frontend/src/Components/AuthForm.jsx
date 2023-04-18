@@ -1,5 +1,3 @@
-/* eslint-disable functional/no-expression-statements, consistent-return */
-
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
@@ -27,6 +25,7 @@ const AuthForm = () => {
       password: '',
     },
 
+    /* eslint-disable functional/no-expression-statements, consistent-return */
     onSubmit: async (values) => {
       setAuthFailed(false);
       try {
@@ -53,6 +52,7 @@ const AuthForm = () => {
       }
     },
   });
+  /* eslint-enable */
 
   return (
     <Form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>

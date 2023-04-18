@@ -1,5 +1,3 @@
-/* eslint-disable functional/no-expression-statements, consistent-return */
-
 import './App.css';
 import React, { useState, useEffect, useMemo } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -19,11 +17,13 @@ const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(initState);
 
   const logIn = () => setLoggedIn(true);
+  /* eslint-disable functional/no-expression-statements */
   const logOut = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('token');
     setLoggedIn(false);
   };
+  /* eslint-enable */
 
   return (
     <AuthContext.Provider value={useMemo(() => ({ loggedIn, logIn, logOut }), [loggedIn])}>
@@ -33,6 +33,7 @@ const AuthProvider = ({ children }) => {
 };
 
 const App = () => {
+  /* eslint-disable functional/no-expression-statements */
   useEffect(() => {
     document.body.classList.add(
       'h-100',
@@ -43,6 +44,7 @@ const App = () => {
     const root = document.getElementById('root');
     root.classList.add('h-100');
   });
+  /* eslint-enable */
 
   return (
     <AuthProvider>
