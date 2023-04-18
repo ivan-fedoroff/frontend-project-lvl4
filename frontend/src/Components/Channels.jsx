@@ -12,9 +12,7 @@ const Channels = (props) => {
     curChannelId, setCurChannelId, showModal,
   } = props;
   const channels = useSelector(channelsSelectors.selectAll);
-  const handleClick = (id) => {
-    setCurChannelId(id);
-  };
+  const handleClick = (id) => setCurChannelId(id);
 
   if (channels.length === 0) {
     return null;

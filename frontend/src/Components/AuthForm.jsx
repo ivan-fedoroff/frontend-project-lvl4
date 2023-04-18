@@ -6,12 +6,14 @@ import { useFormik } from 'formik';
 import { Button, Form, FloatingLabel } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useRollbar } from '@rollbar/react';
 
 import useAuth from './hooks/useAuth';
 import routes from '../utils/routes';
 import useNetErrToast from './hooks/useNetErrToast';
 
 const AuthForm = () => {
+  const rollbar = useRollbar();
   const [authFailed, setAuthFailed] = useState(false);
   const [errorText, setErrorText] = useState('');
   const navigate = useNavigate();
@@ -45,6 +47,8 @@ const AuthForm = () => {
           setErrorText(t('feedback.errorAuth'));
           return errorText;
         }
+        const user = values.username;
+        rollbar.error('Error registration', e, { user });
         displayNetErr();
       }
     },
