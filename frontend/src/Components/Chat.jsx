@@ -45,6 +45,10 @@ const Chat = () => {
     dispatch(messagesActions.addMessage(payload));
   });
 
+  socket.on('newChannel', (payload) => {
+    dispatch(channelsActions.addChannel(payload));
+  });
+
   socket.on('renameChannel', (payload) => {
     dispatch(channelsActions.renameChannel(payload));
   });
