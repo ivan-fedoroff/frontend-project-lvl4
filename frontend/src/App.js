@@ -14,7 +14,9 @@ import RegPage from './Components/RegPage';
 import Layout from './Components/Layout';
 
 const AuthProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const token = localStorage.getItem('token');
+  const initState = !!token;
+  const [loggedIn, setLoggedIn] = useState(initState);
 
   const logIn = () => setLoggedIn(true);
   const logOut = () => {
@@ -23,6 +25,14 @@ const AuthProvider = ({ children }) => {
     setLoggedIn(false);
   };
 
+  return (
+    <AuthContext.Provider value={useMemo(() => ({ loggedIn, logIn, logOut }), [loggedIn])}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+const App = () => {
   useEffect(() => {
     document.body.classList.add(
       'h-100',
@@ -35,30 +45,22 @@ const AuthProvider = ({ children }) => {
   });
 
   return (
-    <AuthContext.Provider value={useMemo(() => ({ loggedIn, logIn, logOut }), [loggedIn])}>
-      {children}
-    </AuthContext.Provider>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="h-100">
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<MainPage />} />
+              <Route path="*" element={<NotFound />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/signup" element={<RegPage />} />
+            </Route>
+          </Routes>
+          <ToastContainer />
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
-
-const App = () => (
-  <AuthProvider>
-    <BrowserRouter>
-      <div className="h-100">
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<MainPage />} />
-            <Route path="*" element={<NotFound />} />
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/signup" element={<RegPage />} />
-          </Route>
-        </Routes>
-        <ToastContainer />
-
-      </div>
-
-    </BrowserRouter>
-  </AuthProvider>
-);
 
 export default App;

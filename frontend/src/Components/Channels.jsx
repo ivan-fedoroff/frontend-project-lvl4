@@ -3,7 +3,7 @@
 import { Nav } from 'react-bootstrap';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import ChannelItem from './CnannelItem';
+import ChannelItem from './ChannelItem';
 
 import { selectors as channelsSelectors } from '../slices/channelsSlice';
 

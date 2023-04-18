@@ -18,17 +18,6 @@ const MessageForm = ({ curChannelId }) => {
   const { t } = useTranslation();
   const displayNetErr = useNetErrToast();
   const user = localStorage.getItem('username');
-  filter.loadDictionary('ru');
-
-  const validate = (values) => {
-    const errors = {};
-
-    if (filter.check(values.body)) {
-      errors.body = t('feedback.errorProfanity');
-    }
-
-    return errors;
-  };
 
   const inputRef = useRef();
   useEffect(() => {
@@ -39,10 +28,12 @@ const MessageForm = ({ curChannelId }) => {
     initialValues: {
       body: '',
     },
-    validate,
     onSubmit: async (values) => {
-      const message = { ...values, ...{ channelId: curChannelId, username } };
+      const body = filter.clean(values.body);
+      const message = { body, channelId: curChannelId, username };
+      console.log(message);
       setBlocked(true);
+
       await socket.emit('newMessage', message, async (response) => {
         const { status } = await response;
         formik.values.body = status === 'ok' ? '' : formik.values.body;
@@ -69,9 +60,7 @@ const MessageForm = ({ curChannelId }) => {
             name="body"
             aria-label="Новое сообщение"
             placeholder={t('forms.message')}
-            isInvalid={formik.errors.body}
             ref={inputRef}
-            onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             value={formik.values.body}
           />
