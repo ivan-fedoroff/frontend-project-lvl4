@@ -7,6 +7,7 @@ export default {
       escape: 'Отмена',
       send: 'Отправить',
       removeChannel: 'Удалить',
+      renameChannel: 'Переименовать',
     },
     main: {
       signup: 'Регистрация',
@@ -46,6 +47,7 @@ export default {
     },
     labels: {
       channelName: 'Имя канала',
+      channelControl: 'Управление каналом',
     },
   },
 };

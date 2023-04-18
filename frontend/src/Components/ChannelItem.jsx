@@ -1,8 +1,9 @@
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const renderChannelName = (name) => {
-  const normalizeName = name.length > 15 ? `${name.slice(0, 13)}...` : name;
+  const normalizeName = name.length > 17 ? `${name.slice(0, 13)}...` : name;
   return normalizeName;
 };
 
@@ -22,13 +23,14 @@ const ChannelItem = (props) => {
   const {
     curChannelId, channel, handleClick, showModal,
   } = props;
+  const { t } = useTranslation();
   if (channel.removable) {
     return (
       <Dropdown as={ButtonGroup} className="d-flex" role="group">
         {renderButton(handleClick, channel, curChannelId)}
 
         <Dropdown.Toggle variant="none" split className="flex-grow-0">
-          <span className="visually-hidden">Управление каналом</span>
+          <span className="visually-hidden">{t('labels.channelControl')}</span>
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
@@ -38,7 +40,7 @@ const ChannelItem = (props) => {
             href="#"
             onClick={() => showModal('renaming', channel.id)}
           >
-            Переименовать
+            {t('buttons.renameChannel')}
           </Dropdown.Item>
           <Dropdown.Item
             role="button"
@@ -46,7 +48,7 @@ const ChannelItem = (props) => {
             href="#"
             onClick={() => showModal('removing', channel.id)}
           >
-            Удалить
+            {t('buttons.removeChannel')}
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
