@@ -56,7 +56,7 @@ const AuthForm = () => {
       <fieldset disabled={formik.isSubmitting}>
         <FloatingLabel
           controlId="username"
-          label={t('forms.username')}
+          label={t('forms.nickname')}
           className="mb-3"
         >
           <Form.Control

@@ -15,7 +15,8 @@ export default {
       footer: 'Нет аккаунта? ',
     },
     forms: {
-      username: 'Ваш ник',
+      nickname: 'Ваш ник',
+      username: 'Имя пользователя',
       password: 'Пароль',
       confirmPass: 'Подтвердите пароль',
       message: 'Введите сообщение...',

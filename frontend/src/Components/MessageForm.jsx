@@ -57,7 +57,7 @@ const MessageForm = ({ curChannelId }) => {
   });
 
   return (
-    <div className="mt-auto px-5 py-4">
+    <div className="mt-auto px-5 py-3">
       <Form
         className="py-1 border rounded-2"
         noValidate
