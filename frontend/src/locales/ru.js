@@ -21,7 +21,7 @@ export default {
       message: 'Введите сообщение...',
     },
     feedback: {
-      errorNetwork: 'Ошибка сети',
+      errorNetwork: 'Ошибка соединения',
       errorNameLength: 'От 3 до 20 символов',
       errorPassword: 'Не менее 6 символов',
       errorNameDouble: 'Такой пользователь уже существует',

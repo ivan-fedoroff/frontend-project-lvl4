@@ -1,11 +1,14 @@
 /* eslint-disable functional/no-expression-statements,
-functional/no-conditional-statements, consistent-return, no-param-reassign */
+functional/no-conditional-statements,
+consistent-return, no-param-reassign,
+react-hooks/exhaustive-deps */
 
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useRollbar } from '@rollbar/react';
 
 import socket from '../utils/socket';
 import routes from '../utils/routes';
@@ -21,11 +24,13 @@ import { actions as channelsActions, selectors as channelsSelectors } from '../s
 
 const Chat = () => {
   const { t } = useTranslation();
+  const rollbar = useRollbar();
   const [curChannelId, setCurChannelId] = useState(null);
   const currentChannel = useSelector((state) => channelsSelectors.selectById(state, curChannelId));
   const chatHeader = currentChannel ? currentChannel.name : 'default';
   const msgs = useSelector(msgsSelectors.selectAll);
   const curChannelMsgs = msgs.filter((msg) => msg.channelId === curChannelId);
+  const user = localStorage.getItem('username');
 
   const displayNetErr = useNetErrToast();
 
@@ -38,10 +43,6 @@ const Chat = () => {
 
   socket.on('newMessage', (payload) => {
     dispatch(messagesActions.addMessage(payload));
-  });
-
-  socket.on('newChannel', (payload) => {
-    dispatch(channelsActions.addChannel(payload));
   });
 
   socket.on('renameChannel', (payload) => {
@@ -62,13 +63,14 @@ const Chat = () => {
         dispatch(channelsActions.addChannels(data.channels));
         dispatch(messagesActions.addMessages(data.messages));
         setCurChannelId(data.currentChannelId);
-      } catch {
+      } catch (error) {
+        rollbar.error('Error fetching data', error, { user });
         displayNetErr();
       }
     };
 
     fetchContent();
-  }, [dispatch, displayNetErr]);
+  }, []);
 
   return (
     <Container className="h-100 my-4 overflow-hidden rounded shadow">

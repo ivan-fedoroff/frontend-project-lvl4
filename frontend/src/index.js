@@ -8,9 +8,15 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import i18n from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
+import { Provider as  RollbarProvider, ErrorBoundary } from '@rollbar/react';
+
 import store from './slices/index';
 import ru from './locales/ru';
 
+const rollbarConfig = {
+  accessToken: '92a0fb115b884a65b1db6c334e9c7084',
+  environment: 'testenv',
+};
 
 i18n
   .use(initReactI18next)
@@ -25,13 +31,18 @@ i18n
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Provider store={store}>
-    <React.StrictMode>
-      <I18nextProvider i18n={i18n}>
-        <App />
-      </I18nextProvider>
-    </React.StrictMode>
-  </Provider>,
+  <RollbarProvider config={rollbarConfig}>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <React.StrictMode>
+          <I18nextProvider i18n={i18n}>
+            <App />
+          </I18nextProvider>
+        </React.StrictMode>
+      </Provider>
+    </ErrorBoundary>
+  </RollbarProvider>
+
 );
 
 // If you want to start measuring performance in your app, pass a function

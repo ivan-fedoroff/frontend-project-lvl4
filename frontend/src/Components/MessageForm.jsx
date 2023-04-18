@@ -6,15 +6,18 @@ import { useFormik } from 'formik';
 import { Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import filter from 'leo-profanity';
+import { useRollbar } from '@rollbar/react';
 
 import socket from '../utils/socket';
 import useNetErrToast from './hooks/useNetErrToast';
 
 const MessageForm = ({ curChannelId }) => {
+  const rollbar = useRollbar();
   const [btnBlocked, setBlocked] = useState(false);
   const username = localStorage.getItem('username');
   const { t } = useTranslation();
   const displayNetErr = useNetErrToast();
+  const user = localStorage.getItem('username');
   filter.loadDictionary('ru');
 
   const validate = (values) => {
@@ -44,14 +47,14 @@ const MessageForm = ({ curChannelId }) => {
         const { status } = await response;
         formik.values.body = status === 'ok' ? '' : formik.values.body;
         if (status !== 'ok') {
+          const error = new Error('error sending message');
+          rollbar.error('Error sending message', error, { user });
           displayNetErr();
         }
       });
       setBlocked(false);
     },
   });
-
-  console.log(formik.errors);
 
   return (
     <div className="mt-auto px-5 py-4">
