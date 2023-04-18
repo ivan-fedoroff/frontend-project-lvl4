@@ -31,7 +31,7 @@ export default {
       errorAuth: 'Неверные имя пользователя или пароль',
       errorChannelExist: 'Должно быть уникальным',
       errorProfanity: 'Не должно быть нецензурным',
-      successRemoving: 'Канал удален',
+      successRemoving: 'Канал удалён',
       successAdding: 'Канал создан',
       successRenaming: 'Канал переименован',
     },
